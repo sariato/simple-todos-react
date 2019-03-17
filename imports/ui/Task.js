@@ -1,37 +1,59 @@
 import React, { Component } from 'react';
-import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
+import styled, { css } from 'styled-components';
 
 import { Tasks } from '../api/tasks.js';
 
+const TaskLI=styled.li`
+  position: relative;
+  list-style: none;
+  padding: 15px;
+  border-bottom: #eee solid 5px;
+  
+  ${props => props.theme.checked && css`
+   color: #888;
+  `}
+  
+  & > .text {
+   margin-left: 10px;
+  }
+ 
+  ${props => !props.theme.checked} {
+   text-decoration: line-through;
+  }}
+`;
+
+const DelTaskBtn=styled.button`
+  float: right;
+  font-weight: bold;
+  background: none;
+  font-size: 1em;
+  border: none;
+  position: relative;
+`;
+	
 // Task component - represents a single todo item
 export default class Task extends Component {
   toggleChecked() {
     // Set the checked property to the opposite of its current value
-    Meteor.call('tasks.setChecked', this.props.task._id, !this.props.task.checked);
+    Tasks.update(this.props.task._id, {
+      $set: { checked: !this.props.task.checked },
+    });
   }
 
   deleteThisTask() {
-    Meteor.call('tasks.remove', this.props.task._id);
+    Tasks.remove(this.props.task._id);
   }
-
-  togglePrivate() {
-    Meteor.call('tasks.setPrivate', this.props.task._id, ! this.props.task.private);
-  }
-
+  
   render() {
     // Give tasks a different className when they are checked off,
     // so that we can style them nicely in CSS
-    const taskClassName = classnames({
-      checked: this.props.task.checked,
-      private: this.props.task.private,
-    });
+   const taskTheme =this.props.task.checked ? {checked:'checked'} : undefined; 
 
     return (
-      <li className={taskClassName}>
-        <button className="delete" onClick={this.deleteThisTask.bind(this)}>
+      <TaskLI theme={taskTheme}>
+        <DelTaskBtn className="delete" onClick={this.deleteThisTask.bind(this)}>
           &times;
-        </button>
+        </DelTaskBtn>
 
         <input
           type="checkbox"
@@ -40,16 +62,8 @@ export default class Task extends Component {
           onClick={this.toggleChecked.bind(this)}
         />
 
-        { this.props.showPrivateButton ? (
-          <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
-            { this.props.task.private ? 'Private' : 'Public' }
-          </button>
-        ) : ''}
-
-        <span className="text">
-          <strong>{this.props.task.username}</strong>: {this.props.task.text}
-        </span>
-      </li>
+        <span className="text">{this.props.task.text}</span>
+      </TaskLI>
     );
   }
 }

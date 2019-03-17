@@ -1,5 +1,5 @@
 {
-  "name": "simple-todos-react",
+  "name": "simple-todos",
   "private": true,
   "scripts": {
     "start": "meteor run",
@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.1.5",
-    "classnames": "^2.2.6",
     "meteor-node-stubs": "^0.4.1",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1"
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "styled-components": "^4.1.3"
   },
   "meteor": {
     "mainModule": {
@@ -22,6 +22,6 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "chai": "^4.2.0"
+    "babel-plugin-styled-components": "^1.10.0"
   }
 }
